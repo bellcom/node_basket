@@ -1,0 +1,7 @@
+name = Node basket
+description = Save nodes to basket for later use
+core = 7.x
+dependencies[] = entityreference
+dependencies[] = views
+features[features_api][] = api:2
+

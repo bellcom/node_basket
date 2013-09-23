@@ -1,0 +1,312 @@
+<?php
+/**
+ * This module allowes the user to save a node as a reference,
+ * in a basket for later use.
+ * The basket can be converted to a toolbox, and sent to other
+ * users.
+ *
+ * @author Thomas Thune Hansen <tth@bellcom.dk>
+ * @copyright bellcom open source aps
+ */
+
+/*
+ * Implements hook_menu()
+ */
+function node_basket_menu(){
+  $items = array();
+
+  $items['node_basket/basket'] = array(
+    'title' => 'Node basket',
+    'page callback' => 'node_basket_basket',
+    'access arguments' => array('use node basket'),
+  );
+
+  $items['node_basket/basket/view'] = array(
+    'title' => t('Node basket'),
+    'page callback' => 'node_basket_basket_view',
+    'access arguments' => array('use node basket'),
+  );
+
+  return $items;
+}
+
+/*
+ * Implements hook_init()
+ */
+function node_basket_init(){
+  // Add the js that handles saving nodes to the basket
+  drupal_add_js(drupal_get_path('module', 'node_basket') . '/js/node_basket.js');
+
+}
+
+/*
+ * Implements nook_node_view()
+ */
+function node_basket_node_view($node, $view_mode, $langcode){
+  // We need the nid when we have to save it to the basket
+  if($view_mode == 'full'){
+    drupal_add_js(array('node_basket' => array('nid' => $node->nid)), 'setting');
+  }
+}
+
+/*
+ * Implements hook_permission()
+ */
+function node_basket_permission(){
+  return array(
+    'administer node basket' => array(
+      'title' => t('Administer node basket module'),
+      'description' => t('Change settings for node basket module'),
+    ),
+    'use node basket' => array(
+      'title' => t('Use the nodebasket module'),
+      'description' => t('Lets the user save nodes to the node basket'),
+    ),
+  );
+}
+
+/*
+ * Implements hook_block_info()
+ */
+function node_basket_block_info(){
+  $blocks = array();
+
+  $blocks['node_basket'] = array(
+    'info' => t('Node basket'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  return $blocks;
+}
+
+/*
+ * Implements hook_block_view()
+ */
+function node_basket_block_view($delta = ''){
+  $block = array();
+
+  switch($delta){
+    case 'node_basket':
+      $block['subject'] = t('Node basket');
+      $block['content'] = '<div id="node-basket"></div>';
+      break;
+  }
+
+  return $block;
+}
+
+/*
+ * Page callback for saving node to users basket.
+ */
+function node_basket_basket($action, $id){
+  $return = array(
+    'err' => TRUE,
+    'msg' => 'no action given',
+  );
+
+  switch($action){
+    case 'add':
+      $return['msg'] = 'failed to save node to basket';
+        if($msg = node_basket_save_to_basket($id)){
+          $return['err'] = FALSE;
+          $return['msg'] = $msg;
+        }
+      break;
+
+    case 'remove':
+      $return['msg'] = 'failed to remove node from basket';
+        if($msg = node_basket_remove_node_from_basket($id)){
+          $return['err'] = FALSE;
+          $return['msg'] = $msg;
+        }
+      break;
+
+
+    case 'status':
+      $return['msg'] = 'node not saved';
+        if($msg = node_basket_get_status($id)){
+          $return['err'] = FALSE;
+          $return['msg'] = $msg;
+        }
+      break;
+  }
+
+  drupal_json_output($return);
+}
+
+/*
+ * Page callback for basket view
+ */
+function node_basket_basket_view($convert = NULL){
+  global $user;
+
+  $basket_nid = node_basket_get_users_basket_id($user->uid);
+
+  if($convert === 'convert'){
+    // Convert basket and reload page
+    node_basket_save_basket_as_toolbox($basket_nid);
+    drupal_goto('/node_basket/basket/view');
+  }
+
+  $node_view = t('You do not have a node basket, add nodes to create one.');
+
+  if($basket_nid){
+    $node = node_load($basket_nid);
+
+    if(is_object($node)){
+      $node_view = '<a href="/node/'.$basket_nid.'/edit">'.t('Edit basket').'</a>  ';
+      $node_view .= '<a href="/node_basket/basket/view/convert">'.t('Convert to toolbox').'</a>  ';
+      $node_view .= drupal_render(node_view($node));
+    }
+  }
+  $toolbox_view = views_embed_view('node_basket', 'block');
+
+  return $node_view . '<h2>'.t('Toolboxes' ).'</h2>' .$toolbox_view;
+}
+
+/*
+ * Implements hook_node_validate
+ */
+function node_basket_node_validate($node){
+  // We want to make sure that a user does not have more than one basket
+  if(
+    $basket_nid = node_basket_get_users_basket_id($node->uid) 
+    &&
+    $node->field_node_basket_type[LANGUAGE_NONE][0]['value'] === 'basket'
+  ){
+    // Tell the user to clean up the mess
+    form_set_error('field_node_basket_type', 'You cannot have more than one basket for each user');
+  }
+
+  return $node;
+}
+
+/*
+ * Status callback, returns false if the node is not saved to the basket
+ * already
+ *
+ * @return
+ *  mixed
+ */
+function node_basket_get_status($id){
+  global $user;
+
+  $basket_nid = node_basket_get_users_basket_id($user->uid);
+
+  if($basket_nid){
+    $node = node_load($basket_nid);
+
+    foreach($node->field_node_basket_references[LANGUAGE_NONE] as $item){
+      if($item['target_id'] == $id){
+        return 'node already saved';
+      }
+    }
+  }
+
+  return false;
+}
+
+/*
+ * Saves the nodereference to the current users basket
+ *
+ * @params
+ *  int - id og node to add
+ *
+ * @return
+ *  string
+ */
+function node_basket_save_to_basket($id = NULL){
+  global $user;
+
+  $basket_nid = node_basket_get_users_basket_id($user->uid);
+
+  if(!$basket_nid){
+    $node = new StdClass();
+
+    $node->type = 'node_basket';
+    $node->title = $user->name . ' ' . 'basket';
+    $node->uid = $user->uid;
+    $node->language = LANGUAGE_NONE;
+    $node->field_node_basket_type[LANGUAGE_NONE][0]['value'] = 'basket';
+  }
+  else {
+    $node = node_load($basket_nid);
+  }
+
+  $node->field_node_basket_references[LANGUAGE_NONE][]['target_id'] = $id;
+
+  node_save($node);
+  return 'saved to basket';
+}
+
+/*
+ * removes the nodereference to the current users basket
+ *
+ * @params
+ *  int - id og node to remove
+ *
+ * @return
+ *  string
+ */
+function node_basket_remove_node_from_basket($id = NULL){
+  global $user;
+
+  $basket_nid = node_basket_get_users_basket_id($user->uid);
+
+  if($basket_nid){
+    $node = node_load($basket_nid);
+
+    foreach($node->field_node_basket_references[LANGUAGE_NONE] as $key => $item){
+      if($item['target_id'] == $id){
+        unset($node->field_node_basket_references[LANGUAGE_NONE][$key]);
+        continue;
+      }
+    }
+  }
+
+  node_save($node);
+  return 'removed node';
+}
+
+/*
+ * Helper function, get basket nid from uid
+ *
+ * @params
+ *  int - uid
+ *
+ * @return
+ *  int - nid
+ */
+function node_basket_get_users_basket_id($uid){
+  $query = new EntityFieldQuery();
+
+  $result = $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('uid', $uid, '=')
+    ->fieldCondition('field_node_basket_type', 'value', 'basket', '=')
+    ->execute();
+
+  if(empty($result)){
+    return false;
+  }
+
+  return key($result['node']);
+}
+
+/*
+ * Saves basket as toolbox
+ *
+ * @params
+ *  int - nid
+ *
+ * @return
+ *  null
+ */
+function node_basket_save_basket_as_toolbox($nid){
+  $node = node_load($nid);
+
+  if(is_object($node)){
+    $node->field_node_basket_type[LANGUAGE_NONE][0]['value'] = 'toolbox';
+    node_save($node);
+  }
+}
