@@ -1,0 +1,27 @@
+#nodebasket-toolbox-list {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  background-color: #fff;
+}
+
+#nodebasket-toolbox-list a {
+  color: #000;
+  display: block;
+  padding: 10px;
+}
+
+.icon-node-basket-success {
+  height: 16px;
+  width: 16px;
+  background: green;
+  display: block;
+}
+
+.icon-node-basket-wait {
+  height: 16px;
+  width: 16px;
+  background: orange;
+  display: block;
+}

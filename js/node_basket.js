@@ -3,46 +3,84 @@
     attach: function (context, settings) {
 
       if(typeof Drupal.settings.node_basket !== 'undefined'){
+        $('#node-basket').html('<div id="node-basket-basket"></div><div id="node-basket-toolbox"></div>');
         var nid = Drupal.settings.node_basket.nid;
-        var markup = '<div id="nodebasket-status"><a href="/node_basket/basket/view">View basket</a>';
+        var markup = '<div id="nodebasket-status">';
 
         $.get('/node_basket/basket/status/'+nid, function(data){
           if(data.err){
-            $('#node-basket').html('<a id="add-to-nodebasket" href="#">Save this node</a>' + markup);
+            $('#node-basket-basket').html('<a id="add-to-nodebasket" href="#">'+Drupal.t('Save to basket')+'</a>' + markup);
 
             $('#node-basket #add-to-nodebasket').click(function(){
-              $('#node-basket #nodebasket-status').text('wait');
+              $('#node-basket #nodebasket-status').html('<span class="icon-node-basket-wait"></span>');
 
               $.get('/node_basket/basket/add/'+nid, function(data){
                 if(!data.err){
-                  $('#node-basket #nodebasket-status').text('success');
+                  $('#node-basket #nodebasket-status').html('<span class="icon-node-basket-success"></span>');
                 }
               });
 
               setTimeout(function(){
                 Drupal.behaviors.node_basket.attach();
-              }, 3000);
+              }, 6000);
             });
           }
           else {
-            $('#node-basket').html('<a id="remove-from-nodebasket" href="#">Remove this node</a>' + markup);
+            $('#node-basket-basket').html('<a id="remove-from-nodebasket" href="#">'+Drupal.t('Remove from basket')+'</a>' + markup);
             $('#node-basket #remove-from-nodebasket').click(function(){
-              $('#node-basket #nodebasket-status').text('wait');
+              $('#node-basket #nodebasket-status').html('<span class="icon-node-basket-wait"></span>');
 
               $.get('/node_basket/basket/remove/'+nid, function(data){
                 if(!data.err){
-                  $('#node-basket #nodebasket-status').text('success');
+                  $('#node-basket #nodebasket-status').html('<span class="icon-node-basket-success"></span>');
                 }
               });
 
               setTimeout(function(){
                 Drupal.behaviors.node_basket.attach();
-              }, 3000);
+              }, 6000);
             });
           }
         });
+
+        if(Drupal.settings.node_basket.addtoolbox){
+          $('#node-basket-toolbox').html('<a id="add-to-nodebasket-toolbox" href="#">Add to toolbox</a><div id="nodebasket-toolbox-status"></div><div id="nodebasket-toolbox-list" style="display: none";></div>');
+
+
+          $('#node-basket #add-to-nodebasket-toolbox').click(function(){
+            var position = $(this).position();
+
+            $('#nodebasket-toolbox-list').css('top', position.top + $(this).height());
+            $('#nodebasket-toolbox-list').css('left', position.left);
+            $('#nodebasket-toolbox-list').toggle();
+
+          });
+
+          $.get('/node_basket/toolbox_list', function(data){
+            $.each(data, function(key, value){
+              $('#nodebasket-toolbox-list').append('<a class="nodebasket-add-to-toolbox" href="#" data-toolbox-id="' + key + '">' + value +'</a>');
+            });
+
+            $('.nodebasket-add-to-toolbox').click(function(){
+
+              $('#nodebasket-toolbox-list').hide();
+              $('#nodebasket-toolbox-status').html('<span class="icon-node-basket-wait"></span>');
+
+              $.get('/node_basket/basket/tb_add/'+ nid +'/' + $(this).data('toolbox-id'), function(data){
+                if(!data.err){
+                  $('#nodebasket-toolbox-status').html('<span class="icon-node-basket-success"></span>');
+                }
+              });
+
+              setTimeout(function(){
+                Drupal.behaviors.node_basket.attach();
+              }, 6000);
+
+
+            });
+          });
+        }
       }
     }
   };
-
 }(jQuery));

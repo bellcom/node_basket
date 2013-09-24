@@ -15,6 +15,7 @@
 function node_basket_menu(){
   $items = array();
 
+  // Ajax
   $items['node_basket/basket'] = array(
     'title' => 'Node basket',
     'page callback' => 'node_basket_basket',
@@ -27,6 +28,13 @@ function node_basket_menu(){
     'access arguments' => array('use node basket'),
   );
 
+  // Ajax
+  $items['node_basket/toolbox_list'] = array(
+    'title' => t('Node basket'),
+    'page callback' => 'node_basket_toolbox_list',
+    'access arguments' => array('administer node basket toolboxs'),
+  );
+
   return $items;
 }
 
@@ -36,6 +44,14 @@ function node_basket_menu(){
 function node_basket_init(){
   // Add the js that handles saving nodes to the basket
   drupal_add_js(drupal_get_path('module', 'node_basket') . '/js/node_basket.js');
+
+  // Show add to toolbox link
+  if(user_access('administer node basket toolboxs')){
+    drupal_add_js(array('node_basket' => array('addtoolbox' => TRUE)), 'setting');
+  }
+
+  // css stuff
+  drupal_add_css(drupal_get_path('module', 'node_basket') . '/css/node_basket.css');
 
 }
 
@@ -61,6 +77,10 @@ function node_basket_permission(){
     'use node basket' => array(
       'title' => t('Use the nodebasket module'),
       'description' => t('Lets the user save nodes to the node basket'),
+    ),
+    'administer node basket toolboxs' => array(
+      'title' => t('Administer nodebasket toolboxes'),
+      'description' => t('Let the user save nodes to other toolboxes'),
     ),
   );
 }
@@ -98,7 +118,7 @@ function node_basket_block_view($delta = ''){
 /*
  * Page callback for saving node to users basket.
  */
-function node_basket_basket($action, $id){
+function node_basket_basket($action, $id, $tb_nid = NULL){
   $return = array(
     'err' => TRUE,
     'msg' => 'no action given',
@@ -121,6 +141,13 @@ function node_basket_basket($action, $id){
         }
       break;
 
+    case 'tb_add':
+      $return['msg'] = 'failed to add node to toolbox';
+        if($msg = node_basket_save_node_to_toolbox($tb_nid, $id)){
+          $return['err'] = FALSE;
+          $return['msg'] = $msg;
+        }
+      break;
 
     case 'status':
       $return['msg'] = 'node not saved';
@@ -162,6 +189,24 @@ function node_basket_basket_view($convert = NULL){
   $toolbox_view = views_embed_view('node_basket', 'block');
 
   return $node_view . '<h2>'.t('Toolboxes' ).'</h2>' .$toolbox_view;
+}
+
+function node_basket_toolbox_list(){
+  $query = new EntityFieldQuery();
+
+  $result = $query
+    ->entityCondition('entity_type', 'node')
+    ->fieldCondition('field_node_basket_type', 'value', 'toolbox', '=')
+    ->execute();
+
+  $toolboxs = array();
+
+  foreach($result['node'] as $key => $item){
+    $node = node_load($key);
+    $toolboxs[$key] = $node->title;
+  }
+
+  drupal_json_output($toolboxs);
 }
 
 /*
@@ -208,6 +253,8 @@ function node_basket_get_status($id){
 
 /*
  * Saves the nodereference to the current users basket
+ * @todo
+ *  check if node is already saved in toolbox
  *
  * @params
  *  int - id og node to add
@@ -266,6 +313,31 @@ function node_basket_remove_node_from_basket($id = NULL){
 
   node_save($node);
   return 'removed node';
+}
+
+/*
+ * Saves a node directly to a toolbox
+ * @todo
+ *  check if node is already saved in toolbox
+ *
+ * @params
+ *  int - uid
+ *  int - id
+ *
+ * @return
+ *  string
+ */
+function node_basket_save_node_to_toolbox($tb_nid, $nid){
+  if(user_access('administer node basket toolboxs')){
+    $node = node_load($tb_nid);
+
+    if(is_object($node)){
+      $node->field_node_basket_references[LANGUAGE_NONE][]['target_id'] = $nid;
+      node_save($node);
+      return 'Saved node to nid ' . $tb_nid;
+    }
+  }
+  return 'Permission denied';
 }
 
 /*
