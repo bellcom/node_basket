@@ -1,5 +1,11 @@
 <?php
 /**
+ * @file
+ * Code for the Node basket feature.
+ */
+
+include_once 'node_basket.features.inc';
+/**
  * This module allowes the user to save a node as a reference,
  * in a basket for later use.
  * The basket can be converted to a toolbox, and sent to other

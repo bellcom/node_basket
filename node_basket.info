@@ -1,7 +1,18 @@
 name = Node basket
 description = Save nodes to basket for later use
 core = 7.x
+package = Other
 dependencies[] = entityreference
+dependencies[] = features
+dependencies[] = list
+dependencies[] = text
 dependencies[] = views
 features[features_api][] = api:2
-
+features[field_base][] = body
+features[field_base][] = field_node_basket_references
+features[field_base][] = field_node_basket_type
+features[field_instance][] = node-node_basket-body
+features[field_instance][] = node-node_basket-field_node_basket_references
+features[field_instance][] = node-node_basket-field_node_basket_type
+features[node][] = node_basket
+features_exclude[dependencies][options] = options
