@@ -148,11 +148,7 @@ function node_basket_basket($action, $id, $tb_nid = NULL){
       break;
 
     case 'tb_add':
-      $return['msg'] = 'failed to add node to toolbox';
-        if($msg = node_basket_save_node_to_toolbox($tb_nid, $id)){
-          $return['err'] = FALSE;
-          $return['msg'] = $msg;
-        }
+        $return = node_basket_save_node_to_toolbox($tb_nid, $id);
       break;
 
     case 'status':
@@ -233,34 +229,7 @@ function node_basket_node_validate($node){
 }
 
 /*
- * Status callback, returns false if the node is not saved to the basket
- * already
- *
- * @return
- *  mixed
- */
-function node_basket_get_status($id){
-  global $user;
-
-  $basket_nid = node_basket_get_users_basket_id($user->uid);
-
-  if($basket_nid){
-    $node = node_load($basket_nid);
-
-    foreach($node->field_node_basket_references[LANGUAGE_NONE] as $item){
-      if($item['target_id'] == $id){
-        return 'node already saved';
-      }
-    }
-  }
-
-  return false;
-}
-
-/*
  * Saves the nodereference to the current users basket
- * @todo
- *  check if node is already saved in toolbox
  *
  * @params
  *  int - id og node to add
@@ -273,23 +242,26 @@ function node_basket_save_to_basket($id = NULL){
 
   $basket_nid = node_basket_get_users_basket_id($user->uid);
 
-  if(!$basket_nid){
-    $node = new StdClass();
+  if(!node_basket_check_for_node($basket_nid, $id)){
 
-    $node->type = 'node_basket';
-    $node->title = $user->name . ' ' . 'basket';
-    $node->uid = $user->uid;
-    $node->language = LANGUAGE_NONE;
-    $node->field_node_basket_type[LANGUAGE_NONE][0]['value'] = 'basket';
+    if(!$basket_nid){
+      $node = new StdClass();
+
+      $node->type = 'node_basket';
+      $node->title = $user->name . ' ' . 'basket';
+      $node->uid = $user->uid;
+      $node->language = LANGUAGE_NONE;
+      $node->field_node_basket_type[LANGUAGE_NONE][0]['value'] = 'basket';
+    }
+    else {
+      $node = node_load($basket_nid);
+    }
+
+    $node->field_node_basket_references[LANGUAGE_NONE][]['target_id'] = $id;
+
+    node_save($node);
+    return 'saved to basket';
   }
-  else {
-    $node = node_load($basket_nid);
-  }
-
-  $node->field_node_basket_references[LANGUAGE_NONE][]['target_id'] = $id;
-
-  node_save($node);
-  return 'saved to basket';
 }
 
 /*
@@ -322,9 +294,49 @@ function node_basket_remove_node_from_basket($id = NULL){
 }
 
 /*
+ * Status callback, returns false if the node is not saved to the basket
+ * already
+ *
+ * @return
+ *  mixed
+ */
+function node_basket_get_status($id){
+  global $user;
+
+  $basket_nid = node_basket_get_users_basket_id($user->uid);
+
+  if(node_basket_check_for_node($basket_nid, $id)){
+    return 'node already saved';
+  }
+
+  return FALSE;
+}
+
+/*
+ * Helper function, check refenence on node
+ *
+ * @params
+ *  int - basket nid
+ *  int - nid
+ *
+ * @return
+ *  bool
+ */
+function node_basket_check_for_node($bnid, $id){
+  $node = node_load($bnid);
+
+  if(is_object($node)){
+    foreach($node->field_node_basket_references[LANGUAGE_NONE] as $key => $item){
+      if($item['target_id'] == $id){
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
+
+/*
  * Saves a node directly to a toolbox
- * @todo
- *  check if node is already saved in toolbox
  *
  * @params
  *  int - uid
@@ -337,10 +349,15 @@ function node_basket_save_node_to_toolbox($tb_nid, $nid){
   if(user_access('administer node basket toolboxs')){
     $node = node_load($tb_nid);
 
-    if(is_object($node)){
-      $node->field_node_basket_references[LANGUAGE_NONE][]['target_id'] = $nid;
-      node_save($node);
-      return 'Saved node to nid ' . $tb_nid;
+    if(!node_basket_check_for_node($tb_nid, $nid)){
+      if(is_object($node)){
+        $node->field_node_basket_references[LANGUAGE_NONE][]['target_id'] = $nid;
+        node_save($node);
+        return 'Saved node to nid ' . $tb_nid;
+      }
+    }
+    else {
+      return 'Already saved';
     }
   }
   return 'Permission denied';
