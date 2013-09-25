@@ -124,7 +124,7 @@ function node_basket_block_view($delta = ''){
 /*
  * Page callback for saving node to users basket.
  */
-function node_basket_basket($action, $id, $tb_nid = NULL){
+function node_basket_basket($action, $arg1, $arg2 = NULL){
   $return = array(
     'err' => TRUE,
     'msg' => 'no action given',
@@ -133,7 +133,7 @@ function node_basket_basket($action, $id, $tb_nid = NULL){
   switch($action){
     case 'add':
       $return['msg'] = 'failed to save node to basket';
-        if($msg = node_basket_save_to_basket($id)){
+        if($msg = node_basket_save_to_basket($arg1)){
           $return['err'] = FALSE;
           $return['msg'] = $msg;
         }
@@ -141,19 +141,23 @@ function node_basket_basket($action, $id, $tb_nid = NULL){
 
     case 'remove':
       $return['msg'] = 'failed to remove node from basket';
-        if($msg = node_basket_remove_node_from_basket($id)){
+        if($msg = node_basket_remove_node_from_basket($arg1)){
           $return['err'] = FALSE;
           $return['msg'] = $msg;
         }
       break;
 
     case 'tb_add':
-        $return = node_basket_save_node_to_toolbox($tb_nid, $id);
+        $return = node_basket_save_node_to_toolbox($arg1, $arg2);
+      break;
+
+    case 'link_add':
+        node_basket_save_link_to_basket($arg1, $_GET['url']);
       break;
 
     case 'status':
       $return['msg'] = 'node not saved';
-        if($msg = node_basket_get_status($id)){
+        if($msg = node_basket_get_status($arg1)){
           $return['err'] = FALSE;
           $return['msg'] = $msg;
         }
@@ -265,6 +269,29 @@ function node_basket_save_to_basket($id = NULL){
 }
 
 /*
+ * Handles saving a link to the basket
+ */
+function node_basket_save_link_to_basket($nid = NULL, $url){
+  if($nid === NULL){
+    global $user;
+
+    $nid = node_basket_get_users_basket_id($user->uid);
+  }
+
+  $url = urldecode($url);
+
+  if(!node_basket_check_for_link($nid, $url)){
+    $node = node_load($nid);
+
+    if(is_object($node)){
+      $node->field_node_basket_links[LANGUAGE_NONE][]['url'] = $url;
+
+      node_save($node);
+    }
+  }
+}
+
+/*
  * removes the nodereference to the current users basket
  *
  * @params
@@ -313,7 +340,7 @@ function node_basket_get_status($id){
 }
 
 /*
- * Helper function, check refenence on node
+ * Helper function, check node refenence on node
  *
  * @params
  *  int - basket nid
@@ -328,6 +355,29 @@ function node_basket_check_for_node($bnid, $id){
   if(is_object($node)){
     foreach($node->field_node_basket_references[LANGUAGE_NONE] as $key => $item){
       if($item['target_id'] == $id){
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
+
+/*
+ * Helper function, check link refenence on node
+ *
+ * @params
+ *  int - basket nid
+ *  string - link
+ *
+ * @return
+ *  bool
+ */
+function node_basket_check_for_link($bnid, $url){
+  $node = node_load($bnid);
+
+  if(is_object($node)){
+    foreach($node->field_node_basket_links[LANGUAGE_NONE] as $key => $item){
+      if($item['url'] == $url){
         return TRUE;
       }
     }

@@ -3,8 +3,8 @@
     attach: function (context, settings) {
 
       if(typeof Drupal.settings.node_basket !== 'undefined'){
+        $('#node-basket').html('<div id="node-basket-basket"></div><div id="node-basket-toolbox"></div>');
         if(typeof Drupal.settings.node_basket.nid !== 'undefined'){
-          $('#node-basket').html('<div id="node-basket-basket"></div><div id="node-basket-toolbox"></div>');
           var nid = Drupal.settings.node_basket.nid;
           var markup = '<div id="nodebasket-status">';
 
@@ -35,36 +35,42 @@
               });
             }
           });
+        }
 
-          if(Drupal.settings.node_basket.addtoolbox){
-            $('#node-basket-toolbox').html('<a id="add-to-nodebasket-toolbox" href="#">Add to toolbox</a><div id="nodebasket-toolbox-status"></div><div id="nodebasket-toolbox-list" style="display: none";></div>');
+        if(Drupal.settings.node_basket.addtoolbox){
+          $('#node-basket-toolbox').html('<a id="add-to-nodebasket-toolbox" href="#">Add to toolbox</a><div id="nodebasket-toolbox-status"></div><div id="nodebasket-toolbox-list" style="display: none";></div>');
 
-            $('#node-basket #add-to-nodebasket-toolbox').click(function(){
-              var position = $(this).position();
+          $('#node-basket #add-to-nodebasket-toolbox').click(function(){
+            var position = $(this).position();
 
-              $('#nodebasket-toolbox-list').css('top', position.top + $(this).height());
-              $('#nodebasket-toolbox-list').css('left', position.left);
-              $('#nodebasket-toolbox-list').toggle();
+            $('#nodebasket-toolbox-list').css('top', position.top + $(this).height());
+            $('#nodebasket-toolbox-list').css('left', position.left);
+            $('#nodebasket-toolbox-list').toggle();
+          });
+
+          $.get('/node_basket/toolbox_list', function(data){
+            $.each(data, function(key, value){
+              $('#nodebasket-toolbox-list').append('<a class="nodebasket-add-to-toolbox" href="#" data-toolbox-id="' + key + '">' + value +'</a>');
             });
 
-            $.get('/node_basket/toolbox_list', function(data){
-              $.each(data, function(key, value){
-                $('#nodebasket-toolbox-list').append('<a class="nodebasket-add-to-toolbox" href="#" data-toolbox-id="' + key + '">' + value +'</a>');
-              });
+            $('.nodebasket-add-to-toolbox').click(function(){
 
-              $('.nodebasket-add-to-toolbox').click(function(){
+              $('#nodebasket-toolbox-list').hide();
+              $('#nodebasket-toolbox-status').html('<span class="icon-node-basket-wait"></span>');
 
-                $('#nodebasket-toolbox-list').hide();
-                $('#nodebasket-toolbox-status').html('<span class="icon-node-basket-wait"></span>');
-
+              if(typeof Drupal.settings.node_basket.nid !== 'undefined'){
                 $.get('/node_basket/basket/tb_add/'+ nid +'/' + $(this).data('toolbox-id'), function(data){
                     Drupal.behaviors.node_basket.updatestatus('#nodebasket-toolbox-status', data.err);
                 });
-
-                Drupal.behaviors.node_basket.reattach();
-              });
+              }
+              else {
+                $.get('/node_basket/basket/link_add/' + $(this).data('toolbox-id') + '/?url=' + encodeURIComponent(window.location.href) , function(data){
+                    Drupal.behaviors.node_basket.updatestatus('#nodebasket-toolbox-status', data.err);
+                });
+              }
+              Drupal.behaviors.node_basket.reattach();
             });
-          }
+          });
         }
       }
     },
