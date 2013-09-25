@@ -219,16 +219,19 @@ function node_basket_toolbox_list(){
  * Implements hook_node_validate
  */
 function node_basket_node_validate($node){
-  // We want to make sure that a user does not have more than one basket
-  if(
-    $basket_nid = node_basket_get_users_basket_id($node->uid) 
-    &&
-    $node->field_node_basket_type[LANGUAGE_NONE][0]['value'] === 'basket'
-  ){
-    // Tell the user to clean up the mess
-    form_set_error('field_node_basket_type', 'You cannot have more than one basket for each user');
-  }
+  if($node->type == 'node_basket'){
 
+    $user_basket_id = node_basket_get_users_basket_id($node->uid);
+
+    // We want to make sure that a user does not have more than one basket
+    if($node->field_node_basket_type[LANGUAGE_NONE][0]['value'] === 'basket' && $user_basket_id){
+
+      if($node->nid !== $user_basket_id){
+      // Tell the user to clean up the mess
+        form_set_error('field_node_basket_type', 'You cannot have more than one basket for each user');
+      }
+    }
+  }
   return $node;
 }
 
@@ -432,7 +435,7 @@ function node_basket_get_users_basket_id($uid){
     ->execute();
 
   if(empty($result)){
-    return false;
+    return FALSE;
   }
 
   return key($result['node']);
