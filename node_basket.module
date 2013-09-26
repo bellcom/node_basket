@@ -468,22 +468,21 @@ function node_basket_save_basket_as_toolbox($nid){
 function node_basket_toolbox_use($nid){
   global $user;
 
-  error_log(__FILE__.':'.__LINE__. print_r($_SERVER, 1)); // tth@bellcom.dk debugging
-
   $user_entity = user_load($user->uid);
 
   $edit = array();
-  $edit['field_node_basket_toolboxes'] = $user_entity->field_node_basket_toolboxes;
-
   if(!empty($user_entity->field_node_basket_toolboxes)){
-    foreach($user_entity->field_node_basket_toolboxes[LANGUAGE_NONE] as $key => $value){
-      if($value['target_id'] == $nid){
-        $unset_key = $key;
-        error_log($unset_key);
+    $edit['field_node_basket_toolboxes'] = $user_entity->field_node_basket_toolboxes;
+
+    if(!empty($user_entity->field_node_basket_toolboxes)){
+      foreach($user_entity->field_node_basket_toolboxes[LANGUAGE_NONE] as $key => $value){
+        if($value['target_id'] == $nid){
+          $unset_key = $key;
+          error_log($unset_key);
+        }
       }
     }
   }
-
   if(isset($unset_key)){
     unset($edit['field_node_basket_toolboxes'][LANGUAGE_NONE][$unset_key]);
   }
