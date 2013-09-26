@@ -1,0 +1,53 @@
+<?php
+/*
+ * @file
+ *  Install file for node_basket module
+ */
+
+function node_basket_install(){
+  if(!field_info_instance('user', 'field_node_basket_toolboxes', 'user')){
+    $instance = array(
+      'bundle' => 'user',
+      'default_value' => NULL,
+      'deleted' => 0,
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'module' => 'entityreference',
+          'settings' => array(
+            'link' => 1,
+          ),
+          'type' => 'entityreference_label',
+          'weight' => 1,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'user',
+      'field_name' => 'field_node_basket_toolboxes',
+      'label' => 'References',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'entityreference',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'path' => '',
+          'size' => 60,
+        ),
+        'type' => 'entityreference_autocomplete',
+        'weight' => -2,
+      ),
+    );
+
+    field_create_instance($instance);
+  }
+}
