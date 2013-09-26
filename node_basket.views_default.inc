@@ -56,12 +56,12 @@ function node_basket_views_default_views() {
       'empty_column' => 0,
     ),
   );
-  /* Footer: Global: Text area */
-  $handler->display->display_options['footer']['area']['id'] = 'area';
-  $handler->display->display_options['footer']['area']['table'] = 'views';
-  $handler->display->display_options['footer']['area']['field'] = 'area';
-  $handler->display->display_options['footer']['area']['content'] = '<a href="/node_basket/basket/view">Alle</a>';
-  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['empty'] = TRUE;
+  $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
@@ -110,6 +110,36 @@ function node_basket_views_default_views() {
 
   /* Display: Toolboxes */
   $handler = $view->new_display('block', 'Toolboxes', 'block');
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Field: Content: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = '';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Delete link */
+  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['label'] = '';
+  $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Nid */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'node';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['nid']['alter']['text'] = 'Tilføj/Fjern';
+  $handler->display->display_options['fields']['nid']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['nid']['alter']['path'] = 'node_basket/toolbox/use/[nid]';
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
 
   /* Display: Toolbox menu view */
   $handler = $view->new_display('block', 'Toolbox menu view', 'block_1');
@@ -119,6 +149,19 @@ function node_basket_views_default_views() {
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'fields';
   $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  /* Footer: Global: Text area */
+  $handler->display->display_options['footer']['area']['id'] = 'area';
+  $handler->display->display_options['footer']['area']['table'] = 'views';
+  $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['empty'] = TRUE;
+  $handler->display->display_options['footer']['area']['content'] = '<a href="/node_basket/basket/view">Alle</a>';
+  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
+  $handler->display->display_options['defaults']['relationships'] = FALSE;
+  /* Relationship: Content: Author */
+  $handler->display->display_options['relationships']['uid']['id'] = 'uid';
+  $handler->display->display_options['relationships']['uid']['table'] = 'node';
+  $handler->display->display_options['relationships']['uid']['field'] = 'uid';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -130,6 +173,31 @@ function node_basket_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'node_basket' => 'node_basket',
+  );
+  $handler->display->display_options['filters']['type']['group'] = 1;
+  /* Filter criterion: Content: Type (field_node_basket_type) */
+  $handler->display->display_options['filters']['field_node_basket_type_value']['id'] = 'field_node_basket_type_value';
+  $handler->display->display_options['filters']['field_node_basket_type_value']['table'] = 'field_data_field_node_basket_type';
+  $handler->display->display_options['filters']['field_node_basket_type_value']['field'] = 'field_node_basket_type_value';
+  $handler->display->display_options['filters']['field_node_basket_type_value']['value'] = array(
+    'toolbox' => 'toolbox',
+  );
+  $handler->display->display_options['filters']['field_node_basket_type_value']['group'] = 1;
   $export['node_basket'] = $view;
 
   return $export;

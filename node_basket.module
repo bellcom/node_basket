@@ -6,7 +6,7 @@
 
 include_once 'node_basket.features.inc';
 /**
- * This module allowes the user to save a node as a reference,
+ * This module allows the user to save a node as a reference,
  * in a basket for later use.
  * The basket can be converted to a toolbox, and sent to other
  * users.
@@ -39,6 +39,12 @@ function node_basket_menu(){
     'title' => t('Node basket'),
     'page callback' => 'node_basket_toolbox_list',
     'access arguments' => array('administer node basket toolboxs'),
+  );
+
+  $items['node_basket/toolbox/use'] = array(
+    'title' => t('Node basket'),
+    'page callback' => 'node_basket_toolbox_use',
+    'access arguments' => array('use node basket'),
   );
 
   return $items;
@@ -458,3 +464,76 @@ function node_basket_save_basket_as_toolbox($nid){
     node_save($node);
   }
 }
+
+function node_basket_toolbox_use($nid){
+  global $user;
+
+  error_log(__FILE__.':'.__LINE__. print_r($_SERVER, 1)); // tth@bellcom.dk debugging
+
+  $user_entity = user_load($user->uid);
+
+  $edit = array();
+  $edit['field_node_basket_toolboxes'] = $user_entity->field_node_basket_toolboxes;
+
+  if(!empty($user_entity->field_node_basket_toolboxes)){
+    foreach($user_entity->field_node_basket_toolboxes[LANGUAGE_NONE] as $key => $value){
+      if($value['target_id'] == $nid){
+        $unset_key = $key;
+        error_log($unset_key);
+      }
+    }
+  }
+
+  if(isset($unset_key)){
+    unset($edit['field_node_basket_toolboxes'][LANGUAGE_NONE][$unset_key]);
+  }
+  else {
+    $edit['field_node_basket_toolboxes'][LANGUAGE_NONE][]['target_id'] = $nid;
+  }
+
+  user_save($user_entity, $edit);
+  drupal_goto($_SERVER['HTTP_REFERER']);
+}
+
+/*
+ * Implements hook_views_pre_render()
+ *
+ * Used for filtering toolboxes shown in left menubar
+ */
+function node_basket_views_pre_render(&$view) {
+  global $user;
+
+  if($view->name == 'node_basket' && $view->current_display == 'block_1'){
+    // Array to store nids we should show the user
+    $nids = array();
+
+    // Get a list of the users own nodes (toolboxes)
+    $result = db_select('node', 'n')
+      ->fields('n')
+      ->execute()
+      ->fetchAll();
+
+    foreach($result as $row){
+      if($row->uid === $user->uid){
+        $nids[] = $row->nid;
+      }
+    }
+
+    // Get a list of the users selected toolboxes
+    $user_entity = user_load($user->uid);
+
+    if(!empty($user_entity->field_node_basket_toolboxes)){
+      foreach($user_entity->field_node_basket_toolboxes[LANGUAGE_NONE] as $item){
+        $nids[] = $item['target_id'];
+      }
+    }
+
+    // Unset stuff we dont want to see
+    foreach($view->result as $key => $row){
+      if(!in_array($row->nid, $nids)){
+        unset($view->result[$key]);
+      }
+    }
+  }
+}
+

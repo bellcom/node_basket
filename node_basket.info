@@ -22,3 +22,4 @@ features[field_instance][] = node-node_basket-field_node_basket_type
 features[node][] = node_basket
 features[views_view][] = node_basket
 features_exclude[dependencies][options] = options
+files[] = node_basket_toolbox_filter.inc
