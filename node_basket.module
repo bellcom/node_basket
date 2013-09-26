@@ -232,7 +232,7 @@ function node_basket_node_validate($node){
     // We want to make sure that a user does not have more than one basket
     if($node->field_node_basket_type[LANGUAGE_NONE][0]['value'] === 'basket' && $user_basket_id){
 
-      if($node->nid !== $user_basket_id){
+      if((int)$node->nid !== (int)$user_basket_id){
       // Tell the user to clean up the mess
         form_set_error('field_node_basket_type', 'You cannot have more than one basket for each user');
       }
