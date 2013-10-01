@@ -54,17 +54,18 @@ function node_basket_menu(){
  * Implements hook_init()
  */
 function node_basket_init(){
-  // Add the js that handles saving nodes to the basket
-  drupal_add_js(drupal_get_path('module', 'node_basket') . '/js/node_basket.js');
+  if(user_access('use node basket')){
+    // Add the js that handles saving nodes to the basket
+    drupal_add_js(drupal_get_path('module', 'node_basket') . '/js/node_basket.js');
 
-  // Show add to toolbox link
-  if(user_access('administer node basket toolboxs')){
-    drupal_add_js(array('node_basket' => array('addtoolbox' => TRUE)), 'setting');
+    // Show add to toolbox link
+    if(user_access('administer node basket toolboxs')){
+      drupal_add_js(array('node_basket' => array('addtoolbox' => TRUE)), 'setting');
+    }
+
+    // css stuff
+    drupal_add_css(drupal_get_path('module', 'node_basket') . '/css/node_basket.css');
   }
-
-  // css stuff
-  drupal_add_css(drupal_get_path('module', 'node_basket') . '/css/node_basket.css');
-
 }
 
 /*
