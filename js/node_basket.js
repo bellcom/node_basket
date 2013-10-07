@@ -73,6 +73,17 @@
           });
         }
       }
+      // show basket contents on hover
+      $("[class^=js-toolbox_id-]").hide();
+      $('.view-id-node_basket .views-row').hover(
+        function(event){
+          var id = $(this).find('.toolbox-title').data('toolbox-id');
+          $(".js-toolbox_id-"+id).show();
+        },
+        function(event){
+          $("[class^=js-toolbox_id-]").hide();
+        }
+      );
     },
 
     reattach: function(){
