@@ -191,9 +191,9 @@ function node_basket_views_default_views() {
   $handler->display->display_options['fields']['field_node_basket_references']['table'] = 'field_data_field_node_basket_references';
   $handler->display->display_options['fields']['field_node_basket_references']['field'] = 'field_node_basket_references';
   $handler->display->display_options['fields']['field_node_basket_references']['label'] = '';
+  $handler->display->display_options['fields']['field_node_basket_references']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_node_basket_references']['alter']['text'] = '<span data-toolbox-id="[nid]">[field_node_basket_references] </span>';
   $handler->display->display_options['fields']['field_node_basket_references']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['field_node_basket_references']['element_wrapper_class'] = 'js-toolbox_id-[nid]';
   $handler->display->display_options['fields']['field_node_basket_references']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['field_node_basket_references']['settings'] = array(
     'link' => 1,
@@ -205,12 +205,21 @@ function node_basket_views_default_views() {
   $handler->display->display_options['fields']['field_node_basket_links']['table'] = 'field_data_field_node_basket_links';
   $handler->display->display_options['fields']['field_node_basket_links']['field'] = 'field_node_basket_links';
   $handler->display->display_options['fields']['field_node_basket_links']['label'] = '';
+  $handler->display->display_options['fields']['field_node_basket_links']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_node_basket_links']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['field_node_basket_links']['element_wrapper_class'] = 'js-toolbox_id-[nid]';
   $handler->display->display_options['fields']['field_node_basket_links']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['field_node_basket_links']['click_sort_column'] = 'url';
   $handler->display->display_options['fields']['field_node_basket_links']['delta_offset'] = '0';
   $handler->display->display_options['fields']['field_node_basket_links']['multi_type'] = 'ul';
+  /* Field: Global: Custom text */
+  $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['table'] = 'views';
+  $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['label'] = '';
+  $handler->display->display_options['fields']['nothing']['alter']['text'] = '[field_node_basket_references] 
+[field_node_basket_links] ';
+  $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['nothing']['element_wrapper_class'] = 'toolbox-content js-toolbox_id-[nid]';
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
   /* Filter criterion: Content: Published */
