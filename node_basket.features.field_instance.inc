@@ -112,7 +112,6 @@ function node_basket_field_default_field_instances() {
   $field_instances['node-node_basket-field_node_basket_references'] = array(
     'bundle' => 'node_basket',
     'default_value' => NULL,
-    'default_value_function' => '',
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -137,11 +136,6 @@ function node_basket_field_default_field_instances() {
     'label' => 'References',
     'required' => 0,
     'settings' => array(
-      'behaviors' => array(
-        'prepopulate' => array(
-          'status' => 0,
-        ),
-      ),
       'user_register_form' => FALSE,
     ),
     'widget' => array(
@@ -187,9 +181,7 @@ function node_basket_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'content_taxonomy_opt_groups' => FALSE,
-      ),
+      'settings' => array(),
       'type' => 'options_select',
       'weight' => -3,
     ),

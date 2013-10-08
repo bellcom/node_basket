@@ -16,7 +16,7 @@ function node_basket_ctools_plugin_api($module = NULL, $api = NULL) {
 /**
  * Implements hook_views_api().
  */
-function node_basket_views_api() {
+function node_basket_views_api($module = NULL, $api = NULL) {
   return array("api" => "3.0");
 }
 
