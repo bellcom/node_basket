@@ -95,7 +95,6 @@ function node_basket_strongarm() {
     ),
   );
   $export['field_bundle_settings_node__node_basket'] = $strongarm;
->>>>>>> cb8ca984439451e622e29d36f5c5470e1cb5eed8
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
