@@ -65,6 +65,37 @@ function node_basket_strongarm() {
   $strongarm->name = 'language_content_type_node_basket';
   $strongarm->value = '0';
   $export['language_content_type_node_basket'] = $strongarm;
+  
+  $strongarm->name = 'field_bundle_settings_node__node_basket';
+  $strongarm->value = array(
+    'view_modes' => array(
+      'teaser' => array(
+        'custom_settings' => TRUE,
+      ),
+      'full' => array(
+        'custom_settings' => FALSE,
+      ),
+      'rss' => array(
+        'custom_settings' => FALSE,
+      ),
+      'search_index' => array(
+        'custom_settings' => FALSE,
+      ),
+      'search_result' => array(
+        'custom_settings' => FALSE,
+      ),
+    ),
+    'extra_fields' => array(
+      'form' => array(
+        'title' => array(
+          'weight' => '-5',
+        ),
+      ),
+      'display' => array(),
+    ),
+  );
+  $export['field_bundle_settings_node__node_basket'] = $strongarm;
+>>>>>>> cb8ca984439451e622e29d36f5c5470e1cb5eed8
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

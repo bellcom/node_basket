@@ -32,6 +32,7 @@ features[variable][] = comment_node_basket
 features[variable][] = comment_preview_node_basket
 features[variable][] = comment_subject_field_node_basket
 features[variable][] = language_content_type_node_basket
+features[variable][] = field_bundle_settings_node__node_basket
 features[variable][] = menu_options_node_basket
 features[variable][] = menu_parent_node_basket
 features[variable][] = node_options_node_basket
