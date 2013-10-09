@@ -78,10 +78,13 @@
       $('.view-id-node_basket .views-row').hover(
         function(event){
           var id = $(this).find('.toolbox-title').data('toolbox-id');
-          $(".js-toolbox_id-"+id).show();
+          $(".js-toolbox_id-"+id).fadeIn(400);
         },
         function(event){
-          $('.toolbox-content').hide();
+          var id = $(this).find('.toolbox-title').data('toolbox-id');
+          setTimeout(function(){
+            $(".js-toolbox_id-"+id).fadeOut(300);
+          }, 400);
         }
       );
     },
