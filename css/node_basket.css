@@ -4,6 +4,17 @@
   left: 0;
   width: 200px;
   background-color: #fff;
+  z-index: 20;
+  -webkit-box-shadow: 1px 1px 4px rgba(133, 133, 133, 1);
+  -moz-box-shadow: 1px 1px 4px rgba(133, 133, 133, 1);
+  -o-box-shadow: 1px 1px 4px rgba(133, 133, 133, 1);
+  -ms-box-shadow: 1px 1px 4px rgba(133, 133, 133, 1);
+  box-shadow: 1px 1px 4px rgba(133, 133, 133, 1);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px;
 }
 
 #nodebasket-toolbox-list a {
