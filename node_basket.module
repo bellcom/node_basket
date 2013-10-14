@@ -194,8 +194,8 @@ function node_basket_basket_view($convert = NULL){
     $node = node_load($basket_nid);
 
     if(is_object($node)){
-      $node_view = '<a href="/node/'.$basket_nid.'/edit">'.t('Edit basket').'</a>  ';
-      $node_view .= '<a href="/node_basket/basket/view/convert">'.t('Convert to toolbox').'</a>  ';
+      $node_view = '<a href="/node/'.$basket_nid.'/edit" class="action-item-small">'.t('Edit basket').'</a>  ';
+      $node_view .= '<a href="/node_basket/basket/view/convert" class="action-item-small">'.t('Convert to toolbox').'</a>  ';
       $node_view .= drupal_render(node_view($node));
     }
   }
