@@ -196,6 +196,7 @@ function node_basket_basket_view($convert = NULL){
     if(is_object($node)){
       $node_view = '<a href="/node/'.$basket_nid.'/edit">'.t('Edit basket').'</a>  ';
       $node_view .= '<a href="/node_basket/basket/view/convert">'.t('Convert to toolbox').'</a>  ';
+      $node_view .= t('The following basket includes links to different tools/sites which you have added. You can convert this basket to a toolbox, you can save for later use.');
       $node_view .= drupal_render(node_view($node));
     }
   }
