@@ -38,7 +38,7 @@
         }
 
         if(Drupal.settings.node_basket.addtoolbox){
-          $('#node-basket-toolbox').html('<a id="add-to-nodebasket-toolbox" href="#">Add to toolbox</a><div id="nodebasket-toolbox-status"></div><div id="nodebasket-toolbox-list" style="display: none";></div>');
+          $('#node-basket-toolbox').html('<a id="add-to-nodebasket-toolbox" href="#">' + Drupal.t('Add to toolbox') + '</a><div id="nodebasket-toolbox-status"></div><div id="nodebasket-toolbox-list" style="display: none";></div>');
 
           $('#node-basket #add-to-nodebasket-toolbox').click(function(){
             var position = $(this).position();

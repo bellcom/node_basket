@@ -236,7 +236,7 @@ function node_basket_node_validate($node){
 
       if((int)$node->nid !== (int)$user_basket_id){
       // Tell the user to clean up the mess
-        form_set_error('field_node_basket_type', 'You cannot have more than one basket for each user');
+        form_set_error('field_node_basket_type', t('You cannot have more than one basket for each user'));
       }
     }
   }
@@ -275,7 +275,7 @@ function node_basket_save_to_basket($id = NULL){
     $node->field_node_basket_references[LANGUAGE_NONE][]['target_id'] = $id;
 
     node_save($node);
-    return 'saved to basket';
+    return t('saved to basket');
   }
 }
 
@@ -328,7 +328,7 @@ function node_basket_remove_node_from_basket($id = NULL){
   }
 
   node_save($node);
-  return 'removed node';
+  return t('removed node');
 }
 
 /*
@@ -344,7 +344,7 @@ function node_basket_get_status($id){
   $basket_nid = node_basket_get_users_basket_id($user->uid);
 
   if(node_basket_check_for_node($basket_nid, $id)){
-    return 'node already saved';
+    return t('node already saved');
   }
 
   return FALSE;
@@ -414,14 +414,14 @@ function node_basket_save_node_to_toolbox($tb_nid, $nid){
       if(is_object($node)){
         $node->field_node_basket_references[LANGUAGE_NONE][]['target_id'] = $nid;
         node_save($node);
-        return 'Saved node to nid ' . $tb_nid;
+        return t('Saved node to nid ') . $tb_nid;
       }
     }
     else {
-      return 'Already saved';
+      return t('Already saved');
     }
   }
-  return 'Permission denied';
+  return t('Permission denied');
 }
 
 /*
