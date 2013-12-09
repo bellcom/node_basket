@@ -7,7 +7,8 @@
 /**
  * Implements hook_ctools_plugin_api().
  */
-function node_basket_ctools_plugin_api($module = NULL, $api = NULL) {
+function node_basket_ctools_plugin_api() {
+  list($module, $api) = func_get_args();
   if ($module == "strongarm" && $api == "strongarm") {
     return array("version" => "1");
   }
@@ -16,7 +17,7 @@ function node_basket_ctools_plugin_api($module = NULL, $api = NULL) {
 /**
  * Implements hook_views_api().
  */
-function node_basket_views_api($module = NULL, $api = NULL) {
+function node_basket_views_api() {
   return array("api" => "3.0");
 }
 
@@ -26,9 +27,9 @@ function node_basket_views_api($module = NULL, $api = NULL) {
 function node_basket_node_info() {
   $items = array(
     'node_basket' => array(
-      'name' => t('Basket'),
+      'name' => t('Indholdskurv'),
       'base' => 'node_content',
-      'description' => t('Holds referenced nodes'),
+      'description' => t('Indholdskurv, bruges af systemet til at oprette værktøjskasser med'),
       'has_title' => '1',
       'title_label' => t('Titel'),
       'help' => '',
