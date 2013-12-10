@@ -59,7 +59,7 @@
               $('#nodebasket-toolbox-status').html('<span class="icon-node-basket-wait"></span>');
 
               if(typeof Drupal.settings.node_basket.nid !== 'undefined'){
-                $.get('/node_basket/basket/tb_add/'+ nid +'/' + $(this).data('toolbox-id'), function(data){
+                $.get('/node_basket/basket/tb_add/' + $(this).data('toolbox-id') +'/' + nid , function(data){
                     Drupal.behaviors.node_basket.updatestatus('#nodebasket-toolbox-status', data.err);
                 });
               }
