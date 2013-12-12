@@ -74,16 +74,29 @@
         }
       }
       // show basket contents on hover
+      var menu_hover = 0;
+
       $('.toolbox-content').hide();
       $('.view-id-node_basket .views-row').hover(
         function(event){
+          menu_hover++;
           var id = $(this).find('.toolbox-title').data('toolbox-id');
+
+          setTimeout(function(){
+              $(".toolbox-content").not(".js-toolbox_id-"+id).fadeOut(100);
+          }, 100);
+
           $(".js-toolbox_id-"+id).fadeIn(400);
+
+
         },
         function(event){
           var id = $(this).find('.toolbox-title').data('toolbox-id');
+          menu_hover--;
           setTimeout(function(){
-            $(".js-toolbox_id-"+id).fadeOut(300);
+            if(menu_hover === 0){
+              $(".js-toolbox_id-"+id).fadeOut(300);
+            }
           }, 400);
         }
       );
