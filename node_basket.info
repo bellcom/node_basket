@@ -8,6 +8,7 @@ dependencies[] = entityreference
 dependencies[] = features
 dependencies[] = link
 dependencies[] = list
+dependencies[] = node
 dependencies[] = strongarm
 dependencies[] = text
 dependencies[] = views
