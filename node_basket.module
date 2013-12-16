@@ -263,7 +263,7 @@ function node_basket_save_to_basket($id = NULL){
       $node = new StdClass();
 
       $node->type = 'node_basket';
-      $node->title = $user->name . ' ' . 'basket';
+      $node->title = t('!user basket', array('!user' => $user->name));
       $node->uid = $user->uid;
       $node->language = LANGUAGE_NONE;
       $node->field_node_basket_type[LANGUAGE_NONE][0]['value'] = 'basket';
