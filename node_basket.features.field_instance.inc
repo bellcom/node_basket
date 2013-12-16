@@ -50,7 +50,7 @@ function node_basket_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => -4,
+      'weight' => 2,
     ),
   );
 
@@ -104,7 +104,7 @@ function node_basket_field_default_field_instances() {
       'module' => 'link',
       'settings' => array(),
       'type' => 'link_field',
-      'weight' => -1,
+      'weight' => 5,
     ),
   );
 
@@ -147,7 +147,7 @@ function node_basket_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => -2,
+      'weight' => 4,
     ),
   );
 
@@ -185,7 +185,7 @@ function node_basket_field_default_field_instances() {
         'content_taxonomy_opt_groups' => FALSE,
       ),
       'type' => 'options_select',
-      'weight' => -3,
+      'weight' => 3,
     ),
   );
 
