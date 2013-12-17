@@ -196,20 +196,27 @@ function node_basket_basket_view($convert = NULL){
     if(is_object($node)){
       $node_view = '<a href="/node/'.$basket_nid.'/edit" class="action-item-small">'.t('Edit basket').'</a>  ';
       $node_view .= '<a href="/node_basket/basket/view/convert" class="action-item-small">'.t('Convert to toolbox').'</a>  ';
-      $node_view .= '<div>' . t('The following basket includes links to different tools/sites which you have added. You can convert this basket to a toolbox, you can save for later use.') . '</div>';
+      $node_view .= '<div class="basket-view">' . t('The following basket includes links to different tools/sites which you have added. You can convert this basket to a toolbox, you can save for later use.') . '</div>';
       $node_view .= drupal_render(node_view($node));
     }
   }
-  $toolbox_view = views_embed_view('node_basket', 'block');
+  $toolbox_view_own = views_embed_view('node_basket', 'block_own');
+  $toolbox_view_search = views_embed_view('node_basket', 'block_search');
 
-  return $node_view . '<h2>'.t('Toolboxes' ).'</h2>' .$toolbox_view;
+  return $node_view . '<h2>' . t('Own toolboxes' ) . '</h2>' . $toolbox_view_own . '<h2>' . t('Other toolboxes' ) . '</h2>' .$toolbox_view_search;
 }
 
+/**
+ *
+ */
 function node_basket_toolbox_list(){
+  global $user;
+
   $query = new EntityFieldQuery();
 
   $result = $query
     ->entityCondition('entity_type', 'node')
+    ->propertyCondition('uid', $user->uid)
     ->fieldCondition('field_node_basket_type', 'value', 'toolbox', '=')
     ->execute();
 
@@ -504,7 +511,7 @@ function node_basket_toolbox_use($nid){
 function node_basket_views_pre_render(&$view) {
   global $user;
 
-  if($view->name == 'node_basket' && $view->current_display == 'block_1'){
+  if($view->name == 'node_basket' && ($view->current_display == 'block_1' || $view->current_display == 'block_own')){
     // Array to store nids we should show the user
     $nids = array();
 

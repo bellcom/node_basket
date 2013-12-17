@@ -131,8 +131,8 @@ function node_basket_views_default_views() {
     'toolbox' => 'toolbox',
   );
 
-  /* Display: Toolboxes */
-  $handler = $view->new_display('block', 'Toolboxes', 'block');
+  /* Display: Toolboxes search */
+  $handler = $view->new_display('block', 'Toolboxes search', 'block_search');
   $handler->display->display_options['defaults']['exposed_form'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'input_required';
   $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Udfør';
@@ -381,6 +381,136 @@ function node_basket_views_default_views() {
     'toolbox' => 'toolbox',
   );
   $handler->display->display_options['filters']['field_node_basket_type_value']['group'] = 1;
+
+  /* Display: Toolboxes own */
+  $handler = $view->new_display('block', 'Toolboxes own', 'block_own');
+  $handler->display->display_options['defaults']['exposed_form'] = FALSE;
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Udfør';
+  $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Gendan';
+  $handler->display->display_options['exposed_form']['options']['exposed_sorts_label'] = 'Sortér efter';
+  $handler->display->display_options['exposed_form']['options']['sort_asc_label'] = 'Stigende';
+  $handler->display->display_options['exposed_form']['options']['sort_desc_label'] = 'Faldende';
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'table';
+  $handler->display->display_options['style_options']['columns'] = array(
+    'title' => 'title',
+    'edit_node' => 'edit_node',
+    'delete_node' => 'delete_node',
+    'nid' => 'nid',
+    'body' => 'title',
+    'field_node_basket_description' => 'title',
+  );
+  $handler->display->display_options['style_options']['default'] = '-1';
+  $handler->display->display_options['style_options']['info'] = array(
+    'title' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '<br />',
+      'empty_column' => 0,
+    ),
+    'edit_node' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'delete_node' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'nid' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'body' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_node_basket_description' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+  );
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['relationships'] = FALSE;
+  /* Forbindelse: Indhold: Forfatter */
+  $handler->display->display_options['relationships']['uid']['id'] = 'uid';
+  $handler->display->display_options['relationships']['uid']['table'] = 'node';
+  $handler->display->display_options['relationships']['uid']['field'] = 'uid';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Felt: Indhold: Titel */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Felt: Indhold: Redigér-link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = '';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  /* Felt: Indhold: Slet-link */
+  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['label'] = '';
+  $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
+  /* Felt: Indhold: Nid */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'node';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['nid']['alter']['text'] = 'Tilføj/Fjern';
+  $handler->display->display_options['fields']['nid']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['nid']['alter']['path'] = 'node_basket/toolbox/use/[nid]';
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  /* Felt: Indhold: Beskrivelse */
+  $handler->display->display_options['fields']['field_node_basket_description']['id'] = 'field_node_basket_description';
+  $handler->display->display_options['fields']['field_node_basket_description']['table'] = 'field_data_field_node_basket_description';
+  $handler->display->display_options['fields']['field_node_basket_description']['field'] = 'field_node_basket_description';
+  $handler->display->display_options['fields']['field_node_basket_description']['label'] = '';
+  $handler->display->display_options['fields']['field_node_basket_description']['alter']['max_length'] = '50';
+  $handler->display->display_options['fields']['field_node_basket_description']['alter']['trim'] = TRUE;
+  $handler->display->display_options['fields']['field_node_basket_description']['element_label_colon'] = FALSE;
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filterkriterie: Indhold: Udgivet */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filterkriterie: Indhold: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'node_basket' => 'node_basket',
+  );
+  /* Filterkriterie: Indhold: Type (field_node_basket_type) */
+  $handler->display->display_options['filters']['field_node_basket_type_value']['id'] = 'field_node_basket_type_value';
+  $handler->display->display_options['filters']['field_node_basket_type_value']['table'] = 'field_data_field_node_basket_type';
+  $handler->display->display_options['filters']['field_node_basket_type_value']['field'] = 'field_node_basket_type_value';
+  $handler->display->display_options['filters']['field_node_basket_type_value']['value'] = array(
+    'toolbox' => 'toolbox',
+  );
   $translatables['node_basket'] = array(
     t('Master'),
     t('Kurv'),
@@ -391,7 +521,7 @@ function node_basket_views_default_views() {
     t('Stigende'),
     t('Faldende'),
     t('Select any filter and click on Apply to see results'),
-    t('Toolboxes'),
+    t('Toolboxes search'),
     t('S'),
     t('Tilføj/Fjern'),
     t('Titel'),
@@ -402,6 +532,7 @@ function node_basket_views_default_views() {
     t('<span data-toolbox-id="[nid]">[field_node_basket_references] </span>'),
     t('[field_node_basket_references] 
 [field_node_basket_links] '),
+    t('Toolboxes own'),
   );
   $export['node_basket'] = $view;
 
